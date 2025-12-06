@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  password    String?
+  role        String   @default("user") // 'user' | 'admin' | 'business'
+  businessName String?
+  location     String?  // JSON: { city: string, state: string, country: string }
+  phone       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  products Product[]
+  ordersAsBuyer Order[] @relation("BuyerOrders")
+  ordersAsSeller Order[] @relation("SellerOrders")
+  contactsSent Contact[] @relation("SenderContacts")
+  contactsReceived Contact[] @relation("ReceiverContacts")
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  quantity    Int
+  unit        String   // 'kg' | 'tonelada' | 'litro' | 'unidad' | 'metro cubico'
+  category    String   // 'organico' | 'plastico' | 'vidrio' | 'metal' | 'papel' | 'textil' | 'electronico' | 'otros'
+  condition   String   // 'nuevo' | 'usado' | 'reciclable' | 'residuo'
+  images       String   // JSON: Array of URLs
+  location     String?  // JSON: { city: string, state: string, country: string }
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  status      String   @default("available") // 'available' | 'sold' | 'reserved'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orders Order[]
+  contacts Contact[]
+
+  @@map("products")
+}
+
+model Order {
+  id                   String  @id @default(cuid())
+  productId            String
+  product              Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyerId              String
+  buyer                User    @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId             String
+  seller               User    @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Cascade)
+  quantity             Int
+  totalPrice           Float
+  status               String  @default("pending") // 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
+  stripePaymentIntentId String?
+  shippingAddress       String?  // JSON: { address: string, city: string, postalCode: string }
+  createdAt            DateTime @default(now())
+
+  @@map("orders")
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation("SenderContacts", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver  User     @relation("ReceiverContacts", fields: [receiverId], references: [id], onDelete: Cascade)
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}
