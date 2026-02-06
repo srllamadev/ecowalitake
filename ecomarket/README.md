@@ -4,13 +4,13 @@ Una plataforma de ecommerce para la compra y venta de materiales reciclables y r
 
 ## Características
 
-- 🔐 Autenticación con NextAuth.js (credenciales + Google OAuth)
-- 🛒 Marketplace con filtros avanzados
-- 💳 Integración con Stripe para pagos seguros
-- 📱 Diseño responsive con Tailwind CSS y Shadcn/ui
-- 🗄️ Base de datos SQLite (desarrollo) / PostgreSQL (producción)
-- ☁️ Almacenamiento de imágenes con Uploadthing
-- 📊 Dashboard para gestión de productos y órdenes
+-  Autenticación con NextAuth.js (credenciales + Google OAuth)
+-  Marketplace con filtros avanzados
+-  Integración con Stripe para pagos seguros
+-  Diseño responsive con Tailwind CSS y Shadcn/ui
+-  Base de datos SQLite (desarrollo) / PostgreSQL (producción)
+-  Almacenamiento de imágenes con Uploadthing
+-  Dashboard para gestión de productos y órdenes
 
 ## Tecnologías
 
